@@ -1,0 +1,4 @@
+El nombre de la red Wi-Fi es "SuperInternet_2024".
+La contraseña es "12345678".
+Para reiniciar el router: desenchufa el cable, espera 30 segundos y vuelve a enchufar.
+El horario de atención es de 9 a 18 horas.
