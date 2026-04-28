@@ -1,132 +1,120 @@
-import pandas as pd
 import requests
-import os
+from flask import Flask, request, jsonify, stream_with_context, Response
+from rapidfuzz import process
+import faiss
+from rag_utils import load_index, embedding_model
+import numpy as np
 from rapidfuzz import process
 
-# PREPROCESSING ---
-
-def get_vocabulary_from_json(json_path):
-    """Extracts dish names from the JSON to use for fuzzy matching."""
-    try:
-        df = pd.read_json(json_path)
-       
-        return df['name'].tolist() 
-    except Exception as e:
-        print(f"Error loading JSON: {e}")
-        return []
-
-# INITIALIZE VOCABULARY
-VOCABULARY = get_vocabulary_from_json("recetas.json")
 
 
+
+app = Flask(__name__)
+index, chunks = load_index()
+
+LLM_API = "http://localhost:1234/v1/chat/completions"
+
+# DICCIONARIO DE ERRORES (Preprocesado)
 ERRORS = {
+    # Pasta & Italian
     "spageti": "spaghetti",
-    "spagueti": "spaghetti",
-    "piza": "pizza",
-    "pisa": "pizza",
-    "risoto": "risotto",
+    "spaguetti": "spaghetti",
+    "spagety": "spaghetti",
+    "tagliateli": "tagliatelle",
+    "taliatele": "tagliatelle",
+    "fuchili": "fusilli",
+    "fucilli": "fusilli",
+    "penne": "penne", # often misspelled as pene (careful there!)
     "rizoto": "risotto",
-    "lasaña": "lasagna",
-    "lasagna": "lasagna",
+    "risoto": "risotto",
     "gnonchi": "gnocchi",
     "noqui": "gnocchi",
-    "tortia": "tortilla",
+    "lasaña": "lasagna",
+    "lasagne": "lasagna",
+    "piza": "pizza",
+    "pisa": "pizza",
+    "focacha": "focaccia",
+    "focacia": "focaccia",
+    
+    # Spanish Dishes
     "paeya": "paella",
+    "paeia": "paella",
+    "tortia": "tortilla",
+    "tortiya": "tortilla",
+    "gazpacho": "gazpacho",
+    "gaspacho": "gazpacho",
+    "choriso": "chorizo",
+    "choriço": "chorizo",
+    "crocreta": "croqueta",
+    "cocreta": "croqueta",
+    
+    # General Ingredients & Cooking Terms
     "recepi": "recipe",
+    "recipi": "recipe",
     "ingredents": "ingredients",
-    "coook": "cook",
-    "how to": "how to"
+    "ingridients": "ingredients",
+    "vegies": "vegetables",
+    "vegtables": "vegetables",
+    "chicken": "chicken", # chicen, chiken
+    "chiken": "chicken",
+    "potatos": "potatoes",
+    "tomatos": "tomatoes",
+    "oilve oil": "olive oil",
+    "vengar": "vinegar",
+    "garlic": "garlic", # garlik
+    "garlik": "garlic",
+    
+    # Verbs/Actions
+    "how to": "how to",
+    "makeing": "making",
+    "cookin": "cooking",
+    "prepair": "prepare",
+    "bakeing": "bakery"
 }
 
-def preprocess_input(text: str) -> str:
-    """Cleans and corrects user input before searching."""
+def preprocess(text):
     text = text.lower().strip()
+    for typo, fix in ERRORS_DICT.items():
+        text = text.replace(typo, fix)
+    return text
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    data = request.json
+    user_msg = data.get("message", "")
     
-   
-    for typo, correction in ERRORS.items():
-        text = text.replace(typo, correction)
+    # 1. Preprocesar
+    clean_query = preprocess(user_msg)
     
-
-    words = text.split()
-    corrected_words = []
-    for word in words:
-        
-        match, score, _ = process.extractOne(word, VOCABULARIO)
-        corrected_words.append(match if score > 85 else word)
-        
-    return " ".join(corrected_words)
-
-#RAG LOGIC (Context Retrieval) 
-
-def retrieve_json_context(clean_query, json_path):
-    """Searches the JSON for the relevant recipe row."""
-    try:
-        df = pd.read_json(json_path)
-
-        results = df[df.apply(lambda row: row.astype(str).str.contains(clean_query, case=False).any(), axis=1)]
-        
-        if not results.empty:
-      
-            return results.to_json(orient="records")
-        return None
-    except:
-        return None
-
-#  LLM CONNECTION (Chef AI)
-
-def consult_chef_ai(context, query):
-    """Sends the context and query to LM Studio."""
-    url = "http://localhost:1234/v1/chat/completions"
+    # 2. RAG Semántico
+    query_vec = embedding_model.encode([clean_query], convert_to_numpy=True).astype("float32")
+    distances, indices = index.search(query_vec, 1)
     
-    system_prompt = (
-        "You are a world-class Professional Chef. "
-        "Use ONLY the provided RECIPE CONTEXT to answer the user's question. "
-        "Explain the ingredients and the cooking process step-by-step. "
-        "If the recipe is not in the context, politely inform the user that it's not in your menu."
+    if indices[0][0] == -1 or distances[0][0] > 1.5:
+        return jsonify({"response": "I'm sorry, I don't have that recipe."})
+
+    recipe = chunks[indices[0][0]]
+    
+    # 3. Prompting
+    prompt = (
+        "You are a Michelin-star Chef. Answer in English using ONLY this context:\n"
+        f"Recipe: {recipe['name']}\nIngredients: {recipe.get('ingredients')}\nSteps: {recipe.get('instructions')}\n\n"
+        f"Question: {user_msg}\nAnswer:"
     )
-    
-    user_prompt = f"RECIPE CONTEXT:\n{context}\n\nUSER QUESTION: {query}"
-    
+
+    # 4. Llamada a LM Studio
     payload = {
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
-        ],
-        "temperature": 0.2
+        "model": "llama-3.2-3b-instruct",
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": 0.1
     }
 
     try:
-        response = requests.post(url, json=payload, timeout=15)
-        return response.json()['choices'][0]['message']['content']
+        r = requests.post(LLM_API, json=payload)
+        response_text = r.json()["choices"][0]["message"]["content"]
+        return jsonify({"response": response_text})
     except:
-        return "CONNECTION ERROR: Please make sure LM Studio Server is running on port 1234."
-
-#  4. MAIN PIPELINE ---
-
-def handle_query(user_input):
-    """The complete flow: Preprocess -> RAG -> Decision -> Generation."""
-    # A. Preprocessing
-    clean_text = preprocess_input(user_input)
-    
-    # B. RAG Search
-    context = retrieve_json_context(clean_text, "recetas.json")
-    
-    # C. Decision / Escalation Logic
-    if not context:
-        return f"I'm sorry, I don't have the recipe for '{user_input}' in my current database."
-    
-    # D. AI Response
-    return consult_chef_ai(context, clean_text)
-
-# EXECUTION
+        return jsonify({"response": "Error: Is LM Studio running?"})
 
 if __name__ == "__main__":
-    print("--- 👨‍🍳 Chef AI Assistant Active ---")
-    while True:
-        user_query = input("\nAsk for a recipe (or type 'quit'): ")
-        if user_query.lower() in ["quit", "exit", "stop"]:
-            print("Goodbye! Happy cooking.")
-            break
-            
-        response = handle_query(user_query)
-        print(f"\nAI: {response}")
+    app.run(port=5000)
