@@ -1,13 +1,8 @@
 import requests
-from flask import Flask, request, jsonify, stream_with_context, Response
-from rapidfuzz import process
+from flask import Flask, request, jsonify
 import faiss
 from rag_utils import load_index, embedding_model
 import numpy as np
-from rapidfuzz import process
-
-
-
 
 app = Flask(__name__)
 index, chunks = load_index()
@@ -16,67 +11,55 @@ LLM_API = "http://localhost:1234/v1/chat/completions"
 
 # DICCIONARIO DE ERRORES (Preprocesado)
 ERRORS = {
-    # Pasta & Italian
-    "spageti": "spaghetti",
-    "spaguetti": "spaghetti",
-    "spagety": "spaghetti",
-    "tagliateli": "tagliatelle",
-    "taliatele": "tagliatelle",
-    "fuchili": "fusilli",
-    "fucilli": "fusilli",
-    "penne": "penne", # often misspelled as pene (careful there!)
-    "rizoto": "risotto",
-    "risoto": "risotto",
-    "gnonchi": "gnocchi",
-    "noqui": "gnocchi",
-    "lasaña": "lasagna",
-    "lasagne": "lasagna",
-    "piza": "pizza",
-    "pisa": "pizza",
-    "focacha": "focaccia",
-    "focacia": "focaccia",
-    
-    # Spanish Dishes
-    "paeya": "paella",
-    "paeia": "paella",
-    "tortia": "tortilla",
-    "tortiya": "tortilla",
-    "gazpacho": "gazpacho",
-    "gaspacho": "gazpacho",
-    "choriso": "chorizo",
-    "choriço": "chorizo",
-    "crocreta": "croqueta",
-    "cocreta": "croqueta",
-    
-    # General Ingredients & Cooking Terms
-    "recepi": "recipe",
-    "recipi": "recipe",
-    "ingredents": "ingredients",
-    "ingridients": "ingredients",
-    "vegies": "vegetables",
-    "vegtables": "vegetables",
-    "chicken": "chicken", # chicen, chiken
-    "chiken": "chicken",
-    "potatos": "potatoes",
-    "tomatos": "tomatoes",
-    "oilve oil": "olive oil",
-    "vengar": "vinegar",
-    "garlic": "garlic", # garlik
-    "garlik": "garlic",
-    
-    # Verbs/Actions
-    "how to": "how to",
-    "makeing": "making",
-    "cookin": "cooking",
-    "prepair": "prepare",
-    "bakeing": "bakery"
+    "spageti": "spaghetti", "spaguetti": "spaghetti", "spagety": "spaghetti",
+    "tagliateli": "tagliatelle", "taliatele": "tagliatelle",
+    "fuchili": "fusilli", "fucilli": "fusilli",
+    "rizoto": "risotto", "risoto": "risotto",
+    "gnonchi": "gnocchi", "noqui": "gnocchi",
+    "lasaña": "lasagna", "lasagne": "lasagna",
+    "piza": "pizza", "pisa": "pizza",
+    "focacha": "focaccia", "focacia": "focaccia",
+    "paeya": "paella", "paeia": "paella",
+    "tortia": "tortilla", "tortiya": "tortilla",
+    "crocreta": "croqueta", "cocreta": "croqueta",
+    "recepi": "recipe", "recipi": "recipe",
+    "ingredents": "ingredients", "ingridients": "ingredients"
 }
 
 def preprocess(text):
     text = text.lower().strip()
-    for typo, fix in ERRORS_DICT.items():
+    for typo, fix in ERRORS.items():
         text = text.replace(typo, fix)
     return text
+
+def es_respuesta_valida(respuesta, contexto_nombre):
+    """
+    LÓGICA DE DECISIÓN POST-LLM:
+    Determina si la respuesta generada por la IA es aceptable.
+    """
+    res_lc = respuesta.lower()
+    
+    # 1. Filtro de Negación: Si el LLM admite que no sabe
+    negaciones = ["i don't know", "no tengo información", "sorry", "lo siento"]
+    if any(neg in res_lc for neg in negaciones):
+        return False
+
+    # 2. Filtro de Longitud: Si la respuesta es demasiado corta (posible error)
+    if len(respuesta) < 20:
+        return False
+
+    # 3. Filtro de Alucinación: ¿Menciona al menos el nombre del plato?
+    if contexto_nombre.lower() not in res_lc:
+        return False
+
+    return True
+
+def escalar_a_humano(pregunta):
+    """
+    LÓGICA DE ESCALADO:
+    Mensaje estándar cuando la IA no puede o no debe responder.
+    """
+    return "Chef's Table: I'm sorry, I don't have that specific recipe in my book. Would you like to talk to our head chef?"
 
 @app.route("/chat", methods=["POST"])
 def chat():
@@ -90,8 +73,13 @@ def chat():
     query_vec = embedding_model.encode([clean_query], convert_to_numpy=True).astype("float32")
     distances, indices = index.search(query_vec, 1)
     
-    if indices[0][0] == -1 or distances[0][0] > 1.5:
-        return jsonify({"response": "I'm sorry, I don't have that recipe."})
+    # LÓGICA DE DECISIÓN PRE-LLM (Umbral de distancia)
+    # Si la distancia es > 1.2, el tema está muy alejado de lo que conocemos
+    if indices[0][0] == -1 or distances[0][0] > 1.2:
+        return jsonify({
+            "response": escalar_a_humano(user_msg),
+            "decision": "escalado_por_distancia"
+        })
 
     recipe = chunks[indices[0][0]]
     
@@ -110,11 +98,23 @@ def chat():
     }
 
     try:
-        r = requests.post(LLM_API, json=payload)
+        r = requests.post(LLM_API, json=payload, timeout=10)
         response_text = r.json()["choices"][0]["message"]["content"]
-        return jsonify({"response": response_text})
-    except:
-        return jsonify({"response": "Error: Is LM Studio running?"})
+        
+        # 5. LÓGICA DE DECISIÓN FINAL (Validación de respuesta)
+        if es_respuesta_valida(response_text, recipe['name']):
+            return jsonify({
+                "response": response_text,
+                "status": "success"
+            })
+        else:
+            return jsonify({
+                "response": escalar_a_humano(user_msg),
+                "status": "escalado_por_validacion"
+            })
+            
+    except Exception as e:
+        return jsonify({"response": "Technical difficulties in the kitchen.", "error": str(e)})
 
 if __name__ == "__main__":
-    app.run(port=5000)
+    app.run(port=5000, debug=True)
