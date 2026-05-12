@@ -44,4 +44,4 @@ class Config:
     LLM_API_KEY = os.getenv("LLM_API_KEY", os.getenv("OPENAI_API_KEY", "lm-studio"))
     LLM_MODEL = os.getenv("LLM_MODEL", os.getenv("OPENAI_MODEL", "auto"))
     LLM_TIMEOUT = float(os.getenv("LLM_TIMEOUT", "120"))
-    LLM_MAX_TOKENS = int(os.getenv("LLM_MAX_TOKENS", "250"))
+    LLM_MAX_TOKENS = int(os.getenv("LLM_MAX_TOKENS", "1000"))

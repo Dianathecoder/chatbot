@@ -1,33 +1,20 @@
-2026-05-12 15:35:47,652 | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2026-05-12 16:33:25,271 | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2026-05-12 15:35:47,652 | [33mPress CTRL+C to quit[0m
-2026-05-12 15:35:47,653 |  * Restarting with stat
-2026-05-12 15:35:56,042 |  * Debugger is active!
-2026-05-12 15:35:56,044 |  * Debugger PIN: 687-176-760
-2026-05-12 15:36:00,518 | 127.0.0.1 - - [12/May/2026 15:36:00] "POST /chat HTTP/1.1" 200 -
-2026-05-12 15:36:55,759 | 127.0.0.1 - - [12/May/2026 15:36:55] "POST /chat HTTP/1.1" 200 -
-2026-05-12 15:37:16,616 | 127.0.0.1 - - [12/May/2026 15:37:16] "POST /chat HTTP/1.1" 200 -
-2026-05-12 15:37:23,527 | 127.0.0.1 - - [12/May/2026 15:37:23] "POST /chat HTTP/1.1" 200 -
-2026-05-12 15:37:30,783 | 127.0.0.1 - - [12/May/2026 15:37:30] "POST /chat HTTP/1.1" 200 -
-2026-05-12 15:38:09,953 | ESCALADO | motivo=respuesta_invalida | pregunta=ninguna
-2026-05-12 15:38:09,953 | 127.0.0.1 - - [12/May/2026 15:38:09] "POST /chat HTTP/1.1" 200 -
-2026-05-12 15:38:44,724 | 127.0.0.1 - - [12/May/2026 15:38:44] "POST /chat HTTP/1.1" 200 -
-2026-05-12 15:38:51,855 | 127.0.0.1 - - [12/May/2026 15:38:51] "POST /chat HTTP/1.1" 200 -
-2026-05-12 15:38:59,937 | 127.0.0.1 - - [12/May/2026 15:38:59] "POST /chat HTTP/1.1" 200 -
-2026-05-12 15:39:15,910 | 127.0.0.1 - - [12/May/2026 15:39:15] "POST /chat HTTP/1.1" 200 -
-2026-05-12 15:41:24,115 |  * Detected change in 'C:\\Users\\diana\\Desktop\\Python_Stucom\\ChatBot\\bot.py', reloading
-2026-05-12 15:41:24,748 |  * Restarting with stat
-2026-05-12 15:41:33,122 |  * Debugger is active!
-2026-05-12 15:41:33,125 |  * Debugger PIN: 687-176-760
-2026-05-12 16:00:21,262 | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+2026-05-12 16:33:25,271 | [33mPress CTRL+C to quit[0m
+2026-05-12 16:33:25,274 |  * Restarting with stat
+2026-05-12 16:33:39,936 |  * Debugger is active!
+2026-05-12 16:33:39,940 |  * Debugger PIN: 446-463-617
+2026-05-12 16:34:12,529 |  * Detected change in 'c:\\Users\\cassi\\Documents\\Python\\chatbot\\agente.py', reloading
+2026-05-12 16:34:13,658 |  * Restarting with stat
+2026-05-12 16:34:34,904 | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on http://127.0.0.1:5000
-2026-05-12 16:00:21,262 | [33mPress CTRL+C to quit[0m
-2026-05-12 16:00:21,263 |  * Restarting with stat
-2026-05-12 16:00:29,696 |  * Debugger is active!
-2026-05-12 16:00:29,699 |  * Debugger PIN: 687-176-760
-2026-05-12 16:01:28,821 | 127.0.0.1 - - [12/May/2026 16:01:28] "POST /chat HTTP/1.1" 200 -
-2026-05-12 16:05:44,633 |  * Detected change in 'C:\\Users\\diana\\Desktop\\Python_Stucom\\ChatBot\\bot.py', reloading
-2026-05-12 16:05:45,272 |  * Restarting with stat
-2026-05-12 16:05:53,745 |  * Debugger is active!
-2026-05-12 16:05:53,747 |  * Debugger PIN: 687-176-760
-2026-05-12 16:05:53,857 | 127.0.0.1 - - [12/May/2026 16:05:53] "POST /chat HTTP/1.1" 200 -
+2026-05-12 16:34:34,905 | [33mPress CTRL+C to quit[0m
+2026-05-12 16:34:34,907 |  * Restarting with stat
+2026-05-12 16:34:49,770 |  * Debugger is active!
+2026-05-12 16:34:49,775 |  * Debugger PIN: 446-463-617
+2026-05-12 16:48:36,620 | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-05-12 16:48:36,620 | [33mPress CTRL+C to quit[0m
+2026-05-12 16:48:36,624 |  * Restarting with stat
+2026-05-12 16:48:52,072 |  * Debugger is active!
+2026-05-12 16:48:52,078 |  * Debugger PIN: 446-463-617

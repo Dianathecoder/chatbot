@@ -38,8 +38,9 @@ class LLMService:
                         {
                             "role": "system",
                             "content": (
-                                "Eres un profesor que ensena Flask paso a paso de forma clara. "
-                                "Responde en espanol con explicaciones breves y practicas."
+                                "Eres un Chef virtual servicial, sofisticado y amable. "
+                                "Te especializas en presentar recetas culinarias de manera atractiva. "
+                                "Responde siempre en español y utiliza el formato markdown para que se lea bonito."
                             ),
                         },
                         {
@@ -47,7 +48,7 @@ class LLMService:
                             "content": prompt,
                         },
                     ],
-                    "temperature": 0.7,
+                    "temperature": 0.5,
                     "max_tokens": self.max_tokens,
                     "stream": False,
                 },
@@ -94,7 +95,7 @@ class LLMService:
                     "ok": True,
                     "selected_model": self.model,
                     "error": (
-                        "No se pudo listar modelos desde Hugging Face, pero la configuracion es usable "
+                        "No se pudo listar modelos desde Hugging Face, pero la configuración es usable "
                         "si LLM_API_KEY y LLM_MODEL son correctos."
                     ),
                     "details": str(e),
@@ -117,11 +118,11 @@ class LLMService:
             return self.model
 
         if self.provider == "huggingface":
-            raise RuntimeError("Hugging Face requiere LLM_MODEL explicito; LLM_MODEL=auto no es valido.")
+            raise RuntimeError("Hugging Face requiere LLM_MODEL explícito; LLM_MODEL=auto no es válido.")
 
         models = models if models is not None else self._list_models()
         if not models:
-            raise RuntimeError("El proveedor no devolvio modelos en /v1/models.")
+            raise RuntimeError("El proveedor no devolvió modelos en /v1/models.")
 
         return models[0]
 
@@ -152,13 +153,13 @@ class LLMService:
     def _provider_error_prefix(self) -> str:
         if self.provider == "lmstudio":
             return (
-                "Error conectando con LM Studio. Comprueba que el servidor local esta arrancado, "
+                "Error conectando con LM Studio. Comprueba que el servidor local está arrancado, "
                 "que hay un modelo cargado y que LLM_BASE_URL/LLM_MODEL son correctos."
             )
 
         if self.provider == "huggingface":
             return (
-                "Error conectando con Hugging Face. Comprueba LLM_API_KEY, creditos disponibles, "
+                "Error conectando con Hugging Face. Comprueba LLM_API_KEY, créditos disponibles, "
                 "LLM_MODEL y LLM_BASE_URL."
             )
 
