@@ -59,3 +59,192 @@
 2026-05-12 17:30:58,131 | 127.0.0.1 - - [12/May/2026 17:30:58] "POST /api/chat HTTP/1.1" 200 -
 2026-05-12 17:31:04,137 | 127.0.0.1 - - [12/May/2026 17:31:04] "POST /api/chat HTTP/1.1" 200 -
 2026-05-12 17:31:26,565 | 127.0.0.1 - - [12/May/2026 17:31:26] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:34:47,049 | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-05-17 22:34:47,049 | [33mPress CTRL+C to quit[0m
+2026-05-17 22:34:47,056 |  * Restarting with stat
+2026-05-17 22:35:01,761 |  * Debugger is active!
+2026-05-17 22:35:01,768 |  * Debugger PIN: 446-463-617
+2026-05-17 22:35:12,472 | 127.0.0.1 - - [17/May/2026 22:35:12] "GET / HTTP/1.1" 200 -
+2026-05-17 22:35:12,593 | 127.0.0.1 - - [17/May/2026 22:35:12] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-05-17 22:35:16,616 | 127.0.0.1 - - [17/May/2026 22:35:16] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:35:19,659 | 127.0.0.1 - - [17/May/2026 22:35:19] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:35:21,506 | 127.0.0.1 - - [17/May/2026 22:35:21] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:35:28,559 | 127.0.0.1 - - [17/May/2026 22:35:28] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:35:30,563 | 127.0.0.1 - - [17/May/2026 22:35:30] "[35m[1mPOST /api/chat HTTP/1.1[0m" 500 -
+2026-05-17 22:37:52,191 |  * Detected change in 'C:\\Users\\cassi\\Documents\\Python\\chatbot\\agente.py', reloading
+2026-05-17 22:37:53,663 |  * Restarting with stat
+2026-05-17 22:38:11,225 |  * Debugger is active!
+2026-05-17 22:38:11,230 |  * Debugger PIN: 446-463-617
+2026-05-17 22:38:26,770 |  * Detected change in 'C:\\Users\\cassi\\Documents\\Python\\chatbot\\rag_utils.py', reloading
+2026-05-17 22:38:27,953 |  * Restarting with stat
+2026-05-17 22:38:44,072 |  * Debugger is active!
+2026-05-17 22:38:44,077 |  * Debugger PIN: 446-463-617
+2026-05-17 22:38:52,714 |  * Detected change in 'C:\\Users\\cassi\\Documents\\Python\\chatbot\\build_index.py', reloading
+2026-05-17 22:38:53,896 |  * Restarting with stat
+2026-05-17 22:39:09,013 |  * Debugger is active!
+2026-05-17 22:39:09,017 |  * Debugger PIN: 446-463-617
+2026-05-17 22:39:10,811 |  * Detected change in 'C:\\Users\\cassi\\Documents\\Python\\chatbot\\bot.py', reloading
+2026-05-17 22:39:11,874 |  * Restarting with stat
+2026-05-17 22:39:27,211 |  * Debugger is active!
+2026-05-17 22:39:27,217 |  * Debugger PIN: 446-463-617
+2026-05-17 22:39:34,422 |  * Detected change in 'C:\\Users\\cassi\\Documents\\Python\\chatbot\\agente.py', reloading
+2026-05-17 22:39:35,617 |  * Restarting with stat
+2026-05-17 22:39:57,549 | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-05-17 22:39:57,550 | [33mPress CTRL+C to quit[0m
+2026-05-17 22:39:57,553 |  * Restarting with stat
+2026-05-17 22:40:13,019 |  * Debugger is active!
+2026-05-17 22:40:13,025 |  * Debugger PIN: 446-463-617
+2026-05-17 22:40:20,235 | 127.0.0.1 - - [17/May/2026 22:40:20] "GET / HTTP/1.1" 200 -
+2026-05-17 22:40:22,873 | 127.0.0.1 - - [17/May/2026 22:40:22] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:40:25,963 | 127.0.0.1 - - [17/May/2026 22:40:25] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:40:34,029 | 127.0.0.1 - - [17/May/2026 22:40:34] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:40:38,251 | 127.0.0.1 - - [17/May/2026 22:40:38] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:41:02,664 | 127.0.0.1 - - [17/May/2026 22:41:02] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:44:14,242 | 127.0.0.1 - - [17/May/2026 22:44:14] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:44:16,170 | 127.0.0.1 - - [17/May/2026 22:44:16] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:44:19,676 | 127.0.0.1 - - [17/May/2026 22:44:19] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:44:20,646 | 127.0.0.1 - - [17/May/2026 22:44:20] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:44:22,337 | 127.0.0.1 - - [17/May/2026 22:44:22] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:44:23,436 | 127.0.0.1 - - [17/May/2026 22:44:23] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:44:25,667 | 127.0.0.1 - - [17/May/2026 22:44:25] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:44:27,196 | 127.0.0.1 - - [17/May/2026 22:44:27] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:44:28,330 | 127.0.0.1 - - [17/May/2026 22:44:28] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:44:29,461 | 127.0.0.1 - - [17/May/2026 22:44:29] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:44:45,876 | 127.0.0.1 - - [17/May/2026 22:44:45] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:47:33,278 |  * Detected change in 'C:\\Users\\cassi\\Documents\\Python\\chatbot\\agente.py', reloading
+2026-05-17 22:47:34,408 |  * Restarting with stat
+2026-05-17 22:47:49,624 |  * Debugger is active!
+2026-05-17 22:47:49,629 |  * Debugger PIN: 446-463-617
+2026-05-17 22:49:58,136 | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-05-17 22:49:58,136 | [33mPress CTRL+C to quit[0m
+2026-05-17 22:49:58,140 |  * Restarting with stat
+2026-05-17 22:50:15,429 |  * Debugger is active!
+2026-05-17 22:50:15,436 |  * Debugger PIN: 446-463-617
+2026-05-17 22:50:15,871 | 127.0.0.1 - - [17/May/2026 22:50:15] "GET / HTTP/1.1" 200 -
+2026-05-17 22:50:33,694 | 127.0.0.1 - - [17/May/2026 22:50:33] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:50:36,410 | 127.0.0.1 - - [17/May/2026 22:50:36] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:50:42,011 | 127.0.0.1 - - [17/May/2026 22:50:42] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:50:45,342 | 127.0.0.1 - - [17/May/2026 22:50:45] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:51:00,942 | 127.0.0.1 - - [17/May/2026 22:51:00] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:52:21,913 | 127.0.0.1 - - [17/May/2026 22:52:21] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:52:23,808 | 127.0.0.1 - - [17/May/2026 22:52:23] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:52:24,820 | 127.0.0.1 - - [17/May/2026 22:52:24] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:52:25,249 | 127.0.0.1 - - [17/May/2026 22:52:25] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:52:33,832 | 127.0.0.1 - - [17/May/2026 22:52:33] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:52:39,152 | 127.0.0.1 - - [17/May/2026 22:52:39] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:53:26,574 | 127.0.0.1 - - [17/May/2026 22:53:26] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:53:36,875 | 127.0.0.1 - - [17/May/2026 22:53:36] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:53:47,370 | 127.0.0.1 - - [17/May/2026 22:53:47] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:53:58,802 | 127.0.0.1 - - [17/May/2026 22:53:58] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:54:27,540 | 127.0.0.1 - - [17/May/2026 22:54:27] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:55:22,636 | 127.0.0.1 - - [17/May/2026 22:55:22] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:55:25,897 | 127.0.0.1 - - [17/May/2026 22:55:25] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:55:29,685 | 127.0.0.1 - - [17/May/2026 22:55:29] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:55:37,119 | 127.0.0.1 - - [17/May/2026 22:55:37] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:55:54,821 | 127.0.0.1 - - [17/May/2026 22:55:54] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 22:59:23,939 |  * Detected change in 'C:\\Users\\cassi\\Documents\\Python\\chatbot\\agente.py', reloading
+2026-05-17 22:59:25,180 |  * Restarting with stat
+2026-05-17 22:59:40,771 |  * Debugger is active!
+2026-05-17 22:59:40,776 |  * Debugger PIN: 446-463-617
+2026-05-17 23:00:26,394 |  * Detected change in 'C:\\Users\\cassi\\Documents\\Python\\chatbot\\agente.py', reloading
+2026-05-17 23:00:27,454 |  * Restarting with stat
+2026-05-17 23:00:43,155 |  * Debugger is active!
+2026-05-17 23:00:43,162 |  * Debugger PIN: 446-463-617
+2026-05-17 23:01:05,743 | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-05-17 23:01:05,743 | [33mPress CTRL+C to quit[0m
+2026-05-17 23:01:05,745 |  * Restarting with stat
+2026-05-17 23:01:20,194 |  * Debugger is active!
+2026-05-17 23:01:20,199 |  * Debugger PIN: 446-463-617
+2026-05-17 23:01:38,193 | 127.0.0.1 - - [17/May/2026 23:01:38] "GET / HTTP/1.1" 200 -
+2026-05-17 23:01:40,533 | 127.0.0.1 - - [17/May/2026 23:01:40] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:01:42,953 | 127.0.0.1 - - [17/May/2026 23:01:42] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:01:45,768 | 127.0.0.1 - - [17/May/2026 23:01:45] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:01:50,813 | 127.0.0.1 - - [17/May/2026 23:01:50] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:02:04,022 | 127.0.0.1 - - [17/May/2026 23:02:04] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:03:02,688 | 127.0.0.1 - - [17/May/2026 23:03:02] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:03:05,541 | 127.0.0.1 - - [17/May/2026 23:03:05] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:03:07,372 | 127.0.0.1 - - [17/May/2026 23:03:07] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:03:07,638 | 127.0.0.1 - - [17/May/2026 23:03:07] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:03:23,286 | 127.0.0.1 - - [17/May/2026 23:03:23] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:04:08,785 | 127.0.0.1 - - [17/May/2026 23:04:08] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:04:09,175 | 127.0.0.1 - - [17/May/2026 23:04:09] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:04:09,865 | 127.0.0.1 - - [17/May/2026 23:04:09] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:04:10,121 | 127.0.0.1 - - [17/May/2026 23:04:10] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:04:20,795 | 127.0.0.1 - - [17/May/2026 23:04:20] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:04:36,609 | 127.0.0.1 - - [17/May/2026 23:04:36] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:04:37,429 | 127.0.0.1 - - [17/May/2026 23:04:37] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:04:37,812 | 127.0.0.1 - - [17/May/2026 23:04:37] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:04:51,828 | 127.0.0.1 - - [17/May/2026 23:04:51] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:05:02,108 | 127.0.0.1 - - [17/May/2026 23:05:02] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:05:11,640 | 127.0.0.1 - - [17/May/2026 23:05:11] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:05:13,761 | 127.0.0.1 - - [17/May/2026 23:05:13] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:09:09,255 |  * Detected change in 'C:\\Users\\cassi\\Documents\\Python\\chatbot\\agente.py', reloading
+2026-05-17 23:09:10,354 |  * Restarting with stat
+2026-05-17 23:09:26,691 |  * Debugger is active!
+2026-05-17 23:09:26,695 |  * Debugger PIN: 446-463-617
+2026-05-17 23:10:56,255 |  * Detected change in 'C:\\Users\\cassi\\Documents\\Python\\chatbot\\agente.py', reloading
+2026-05-17 23:10:57,450 |  * Restarting with stat
+2026-05-17 23:11:25,122 | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-05-17 23:11:25,122 | [33mPress CTRL+C to quit[0m
+2026-05-17 23:11:25,125 |  * Restarting with stat
+2026-05-17 23:11:41,563 |  * Debugger is active!
+2026-05-17 23:11:41,569 |  * Debugger PIN: 446-463-617
+2026-05-17 23:11:42,011 | 127.0.0.1 - - [17/May/2026 23:11:42] "GET / HTTP/1.1" 200 -
+2026-05-17 23:11:44,684 | 127.0.0.1 - - [17/May/2026 23:11:44] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:11:46,112 | 127.0.0.1 - - [17/May/2026 23:11:46] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:11:47,495 | 127.0.0.1 - - [17/May/2026 23:11:47] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:11:47,744 | 127.0.0.1 - - [17/May/2026 23:11:47] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:11:48,077 | 127.0.0.1 - - [17/May/2026 23:11:48] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:11:48,741 | 127.0.0.1 - - [17/May/2026 23:11:48] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:12:01,199 | 127.0.0.1 - - [17/May/2026 23:12:01] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:12:21,063 | 127.0.0.1 - - [17/May/2026 23:12:21] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:12:22,016 | 127.0.0.1 - - [17/May/2026 23:12:22] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:12:22,400 | 127.0.0.1 - - [17/May/2026 23:12:22] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:12:23,321 | 127.0.0.1 - - [17/May/2026 23:12:23] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:12:37,525 | 127.0.0.1 - - [17/May/2026 23:12:37] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:13:00,001 |  * Detected change in 'C:\\Users\\cassi\\Documents\\Python\\chatbot\\agente.py', reloading
+2026-05-17 23:13:01,256 |  * Restarting with stat
+2026-05-17 23:13:30,933 | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-05-17 23:13:30,933 | [33mPress CTRL+C to quit[0m
+2026-05-17 23:13:30,935 |  * Restarting with stat
+2026-05-17 23:13:45,264 |  * Debugger is active!
+2026-05-17 23:13:45,270 |  * Debugger PIN: 446-463-617
+2026-05-17 23:13:47,589 | 127.0.0.1 - - [17/May/2026 23:13:47] "GET / HTTP/1.1" 200 -
+2026-05-17 23:13:53,965 | 127.0.0.1 - - [17/May/2026 23:13:53] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:13:54,589 | 127.0.0.1 - - [17/May/2026 23:13:54] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:13:55,197 | 127.0.0.1 - - [17/May/2026 23:13:55] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:13:55,454 | 127.0.0.1 - - [17/May/2026 23:13:55] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:13:59,025 | 127.0.0.1 - - [17/May/2026 23:13:59] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:14:06,830 | 127.0.0.1 - - [17/May/2026 23:14:06] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:14:08,616 | 127.0.0.1 - - [17/May/2026 23:14:08] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:14:09,655 | 127.0.0.1 - - [17/May/2026 23:14:09] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:14:10,137 | 127.0.0.1 - - [17/May/2026 23:14:10] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:14:12,189 | 127.0.0.1 - - [17/May/2026 23:14:12] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:14:14,512 | 127.0.0.1 - - [17/May/2026 23:14:14] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:14:16,352 | 127.0.0.1 - - [17/May/2026 23:14:16] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:14:19,038 | 127.0.0.1 - - [17/May/2026 23:14:19] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:14:21,060 | 127.0.0.1 - - [17/May/2026 23:14:21] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:14:27,677 |  * Detected change in 'C:\\Users\\cassi\\Documents\\Python\\chatbot\\agente.py', reloading
+2026-05-17 23:14:28,920 |  * Restarting with stat
+2026-05-17 23:14:53,419 | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-05-17 23:14:53,419 | [33mPress CTRL+C to quit[0m
+2026-05-17 23:14:53,422 |  * Restarting with stat
+2026-05-17 23:15:10,091 |  * Debugger is active!
+2026-05-17 23:15:10,096 |  * Debugger PIN: 446-463-617
+2026-05-17 23:15:10,502 | 127.0.0.1 - - [17/May/2026 23:15:10] "GET / HTTP/1.1" 200 -
+2026-05-17 23:15:21,576 | 127.0.0.1 - - [17/May/2026 23:15:21] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:15:23,710 | 127.0.0.1 - - [17/May/2026 23:15:23] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:15:27,584 | 127.0.0.1 - - [17/May/2026 23:15:27] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:15:30,175 | 127.0.0.1 - - [17/May/2026 23:15:30] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:15:49,231 | 127.0.0.1 - - [17/May/2026 23:15:49] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:16:58,568 | 127.0.0.1 - - [17/May/2026 23:16:58] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:16:59,789 | 127.0.0.1 - - [17/May/2026 23:16:59] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:17:00,719 | 127.0.0.1 - - [17/May/2026 23:17:00] "POST /api/chat HTTP/1.1" 200 -
+2026-05-17 23:17:08,713 | 127.0.0.1 - - [17/May/2026 23:17:08] "POST /api/chat HTTP/1.1" 200 -

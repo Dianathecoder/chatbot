@@ -4,12 +4,13 @@ import logging
 from datetime import datetime
 from flask import Flask, request, jsonify
 import faiss
-from rag_utils import load_index, embedding_model
+from rag_utils import load_index, embedding_model, search
 import numpy as np
 
 app = Flask(__name__)
 index, chunks = load_index()
 LLM_API = "http://localhost:1234/v1/chat/completions"
+DEFAULT_TOP_K = 3
 
 logging.basicConfig(
     filename="escalados.log",
@@ -19,7 +20,7 @@ logging.basicConfig(
 
 sesiones = {}
 
-# --- CAMBIO 1: ESTADOS ACTUALIZADOS CON LA PREGUNTA DE TIEMPO ---
+# ESTADOS ACTUALIZADOS CON LA PREGUNTA DE TIEMPO ---
 ESTADOS = {
     "inicio":       "¿Qué tipo de cocina te apetece? Tenemos: Italiana o Española.",
     "tipo_elegido": "¿Tienes algún ingrediente principal en mente? (pasta, carne, tomate...)",
@@ -27,7 +28,7 @@ ESTADOS = {
     "ingrediente":  "¿Tienes alguna restricción dietética? (vegetariano, low-carb... o escribe ninguna)",
 }
 
-# --- CAMBIO 2: CATEGORÍAS ADAPTADAS A TUS NUEVOS CHUNKS ---
+# CATEGORÍAS ADAPTADAS A TUS NUEVOS CHUNKS ---
 CATEGORIAS = {
     "española": ["paella", "tortilla", "gazpacho"],
     "italiana": ["lasagna", "gnocchi", "bolognese", "sandwich", "pasta"],
@@ -38,14 +39,11 @@ def preprocesar_input(texto):
     if "espanola" in texto: texto = "española"
     return texto
 
-def recuperar_receta(query):
-    vec = embedding_model.encode([query], convert_to_numpy=True).astype("float32")
-    distances, indices = index.search(vec, 1)
-    idx = indices[0][0]
-    dist = float(distances[0][0])
-    if idx == -1 or dist > 1.5:
-        return None, dist
-    return chunks[idx], dist
+def recuperar_receta(query, top_k=1):
+    results = search(index, chunks, query, top_k=top_k)
+    if not results:
+        return [], []
+    return results, [item["score"] for item in results]
 
 def llamar_llm(prompt):
     payload = {
@@ -95,19 +93,24 @@ def manejar_pregunta(session_id, mensaje):
         
         # Búsqueda RAG combinando los datos recogidos
         busqueda = f"{sesion['datos']['tipo']} {sesion['datos']['ingrediente']}"
-        receta, dist = recuperar_receta(busqueda)
+        recetas, distances = recuperar_receta(busqueda, top_k=DEFAULT_TOP_K)
 
-        if not receta:
+        if not recetas:
             return {"response": "No encontré nada específico. ¿Deseas hablar con el Chef humano?"}
 
-        # CAMBIO 4: MAPEO DE CLAVES DEL NUEVO JSON (titulo, instrucciones)
-        nombre = receta.get("titulo", "Receta Especial")
-        ings = ", ".join(receta.get("ingredientes", []))
-        pasos = " ".join(receta.get("instrucciones", []))
-        
+        context = []
+        for index, receta in enumerate(recetas, start=1):
+            nombre = receta.get("titulo", "Receta Especial")
+            ingredientes = ", ".join(receta.get("ingredientes", []))
+            pasos = " ".join(receta.get("instrucciones", []))
+            score = receta.get("score", 0.0)
+            context.append(
+                f"Receta {index}: {nombre}\nIngredientes: {ingredientes}\nPasos: {pasos}\nScore FAISS: {score:.4f}"
+            )
+
         prompt = (
-            f"Eres un Chef Michelin. Presenta esta receta: {nombre}.\n"
-            f"Contexto: {ings}. Pasos: {pasos}.\n"
+            "Eres un Chef Michelin. Usa el siguiente contexto para responder con elegancia y sabor.\n\n"
+            f"{chr(10).join(context)}\n\n"
             f"El cliente tiene {sesion['datos']['tiempo']} y sigue una dieta {sesion['datos']['dieta']}.\n"
             "Responde en español de forma elegante."
         )

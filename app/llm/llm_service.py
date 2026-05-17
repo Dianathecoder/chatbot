@@ -26,7 +26,7 @@ class LLMService:
         self.timeout = config.timeout
         self.max_tokens = config.max_tokens
 
-    def ask(self, prompt: str) -> str:
+    def ask(self, prompt: str, system_prompt: str = "Eres un asistente útil.") -> str:
         try:
             model = self._resolve_model()
             response = requests.post(
@@ -37,11 +37,7 @@ class LLMService:
                     "messages": [
                         {
                             "role": "system",
-                            "content": (
-                                "Eres un Chef virtual servicial, sofisticado y amable. "
-                                "Te especializas en presentar recetas culinarias de manera atractiva. "
-                                "Responde siempre en español y utiliza el formato markdown para que se lea bonito."
-                            ),
+                            "content": system_prompt,
                         },
                         {
                             "role": "user",

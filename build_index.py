@@ -6,7 +6,6 @@ def build():
     print("Leyendo recetas.json...")
     recipes = load_recipes()
     
-    # Texto que usaremos para buscar (Nombre + Ingredientes)
     texts = [f"{r.get('titulo', 'Sin título')} {' '.join(r.get('ingredientes', []))}" for r in recipes]
     
     print("Creando vectores (embeddings)...")

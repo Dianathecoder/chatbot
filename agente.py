@@ -7,7 +7,7 @@ from typing import Any
 
 from flask import Flask, jsonify, render_template_string, request
 
-from rag_utils import load_index, embedding_model
+from rag_utils import load_index, embedding_model, search
 
 from app.config import Config
 from app.llm.llm_service import LLMConfig, LLMService
@@ -249,10 +249,66 @@ HTML_TEMPLATE = r"""
 </html>
 """
 
+DEFAULT_TOP_K = 3
+
+ERRORS = {
+    "arros": "arroz",
+    "poyo": "pollo",
+    "spagueti": "espagueti",
+    "espagheti": "espagueti",
+    "zanoria": "zanahoria",
+    "kueso": "queso",
+    "huevoz": "huevos",
+    "vejetariano": "vegetariano",
+    "saludavle": "saludable",
+    "rapido": "rápido",
+    "cantid": "cantidad",
+    "azucar": "azúcar"
+}
+
+
+def preprocesar_input(texto: str) -> str:
+    texto = texto.lower().strip()
+    texto = " ".join(texto.split())
+
+    for mal, bien in ERRORS.items():
+        texto = texto.replace(mal, bien)
+
+    return texto
+
+
+def build_prompt(contexto: str, pregunta: str) -> str:
+    return (
+        "Eres un agente de soporte técnico de atención al cliente. "
+        "Responde usando SOLO la información del contexto. "
+        "Si no puedes responder con seguridad, di que escalarás el caso a un humano.\n\n"
+        f"Contexto:\n{contexto}\n\n"
+        f"Pregunta: {pregunta}\n"
+        "Respuesta:" 
+    )
+
+
+def es_respuesta_valida(respuesta: str, contexto: str) -> bool:
+    if not contexto or len(contexto.strip()) == 0:
+        return False
+    if len(respuesta.strip()) < 20:
+        return False
+    low = respuesta.lower()
+    if "no tengo información" in low or "no sé" in low or "no puedo" in low:
+        return False
+    return True
+
+
+def escalar_a_humano(pregunta: str) -> str:
+    return (
+        "No he podido resolver tu problema con la información disponible. "
+        "Te paso con un agente humano para que te ayude mejor."
+    )
+
 ESTADOS = {
     "inicio":       "¿Qué tipo de cocina te apetece? Tenemos: Italiana o Española.",
     "tipo_elegido": "¿Tienes algún ingrediente principal en mente? (pasta, sausage, beef...)",
-    "tiempo":       "¿Buscas algo rápido (menos de 30 min) o tienes tiempo para una receta elaborada?",
+    "tiempo":       "Perfecto. ¿De cuánto tiempo dispones para cocinar? (Ej: rápido 30 min, 1 hora, sin prisa...)",
     "ingrediente":  "¿Tienes alguna restricción dietética? (Alta en Proteína, Low-Carb... o escribe ninguna)",
 }
 
@@ -268,85 +324,130 @@ class ChefRagAgent:
             texto = "española"
         return texto
 
-    def recuperar_receta(self, query: str) -> tuple[dict | None, float]:
-        vec = embedding_model.encode([query], convert_to_numpy=True).astype("float32")
-        distances, indices = self.index.search(vec, 1)
-        idx = indices[0][0]
-        dist = float(distances[0][0])
-        
-        # Umbral ajustable. Si no encuentra nada, sube el 1.5 a 2.0
-        if idx == -1 or dist > 1.8:
-            return None, dist
-        return self.chunks[idx], dist
+    def recuperar_chunks(self, query: str, top_k: int = 1) -> tuple[list[dict], list[float]]:
+        if top_k <= 0:
+            return [], []
 
-    def run(self, session_id: str, mensaje: str) -> dict[str, Any]:
-        limpio = self.preprocesar_input(mensaje)
+        results = search(self.index, self.chunks, query, top_k=top_k)
+        if not results:
+            return [], []
+
+        return results, [chunk["score"] for chunk in results]
+
+    def build_context(self, recetas: list[dict]) -> str:
+        context_rows = []
+        for index, receta in enumerate(recetas, start=1):
+            nombre = receta.get("titulo", "Receta")
+            ingredientes = ", ".join(receta.get("ingredientes", []))
+            pasos = " ".join(receta.get("instrucciones", []))
+            score = receta.get("score", 0.0)
+            context_rows.append(
+                f"Receta {index}: {nombre}\nIngredientes: {ingredientes}\nPasos: {pasos}\nScore FAISS: {score:.4f}"
+            )
+        return "\n\n".join(context_rows)
+
+    def run(self, session_id: str, mensaje: str, top_k: int = DEFAULT_TOP_K) -> dict[str, Any]:
+        limpio = preprocesar_input(mensaje)
         sesion = self.sesiones.setdefault(session_id, {"estado": "inicio", "datos": {}})
 
+        # Reset forzado
         if "hola" in limpio or "reset" in limpio:
             self.sesiones[session_id] = {"estado": "esperando_tipo", "datos": {}}
-            return {"estado": "esperando_tipo", "reply": "¡Bienvenido! " + ESTADOS["inicio"]}
+            return {"estado": "esperando_tipo", "reply": ESTADOS["inicio"]}
 
+        # Fases de filtrado
         if sesion["estado"] == "esperando_tipo":
-            if "italiana" in limpio or "española" in limpio:
-                sesion["datos"]["tipo"] = "italian" if "italiana" in limpio else "spanish"
-                sesion["estado"] = "esperando_ingrediente"
-                return {"estado": "esperando_ingrediente", "reply": ESTADOS["tipo_elegido"]}
-            return {"estado": sesion["estado"], "reply": "Por favor, elige entre Italiana o Española."}
+            sesion["datos"]["tipo"] = limpio
+            sesion["estado"] = "esperando_ingrediente"
+            return {"estado": sesion["estado"], "reply": ESTADOS["tipo_elegido"]}
 
         if sesion["estado"] == "esperando_ingrediente":
             sesion["datos"]["ingrediente"] = limpio
             sesion["estado"] = "esperando_tiempo"
-            return {"estado": "esperando_tiempo", "reply": ESTADOS["tiempo"]}
+            return {"estado": sesion["estado"], "reply": ESTADOS["tiempo"]}
 
         if sesion["estado"] == "esperando_tiempo":
             sesion["datos"]["tiempo"] = limpio
             sesion["estado"] = "esperando_dieta"
-            return {"estado": "esperando_dieta", "reply": ESTADOS["ingrediente"]}
+            return {"estado": sesion["estado"], "reply": ESTADOS["ingrediente"]}
 
         if sesion["estado"] == "esperando_dieta":
             sesion["datos"]["dieta"] = limpio
-            
-            # Buscar en FAISS
-            busqueda = f"{sesion['datos']['tipo']} {sesion['datos']['ingrediente']}"
-            receta, dist = self.recuperar_receta(busqueda)
 
-            if not receta:
-                self.sesiones[session_id]["estado"] = "inicio"
+            datos = sesion["datos"]
+            busqueda = f"cocina {datos['tipo']}, ingrediente {datos['ingrediente']}, tiempo {datos['tiempo']}, dieta {datos['dieta']}"
+            
+            recetas, distances = self.recuperar_chunks(busqueda, top_k=top_k)
+
+            # Valida que el prompt del usuario tenga sentido
+            if not recetas or distances[0] > 1: 
+                self.sesiones[session_id] = {"estado": "esperando_tipo", "datos": {}}
                 return {
-                    "estado": "finalizado", 
-                    "reply": "Lo siento, no encontré nada específico en el recetario con esos datos. ¿Deseas empezar de nuevo? (Dime 'hola')"
+                    "estado": "escalado",
+                    "reply": "No he podido entender tus preferencias o no encuentro nada remotamente parecido en nuestro recetario. Te paso con un agente humano.",
+                    "escalated": True,
+                    "top_k": top_k,
+                    "retrieved_chunks": [],
                 }
 
-            # Extraer del formato exacto de tu JSON
-            nombre = receta.get("titulo", "Receta Especial")
-            ings = ", ".join(receta.get("ingredientes", []))
-            pasos = "\n".join(receta.get("instrucciones", []))
+            # Lógica de Decisión
+            if not recetas:
+                self.sesiones[session_id] = {"estado": "esperando_tipo", "datos": {}}
+                return {
+                    "estado": "escalado",
+                    "reply": escalar_a_humano(busqueda),
+                    "escalated": True,
+                    "top_k": top_k,
+                    "retrieved_chunks": [],
+                }
+
+            # Construir el contexto y el Prompt personalizado para el Chef
+            context = self.build_context(recetas)
             
-            prompt = (
-                f"Eres un Chef de un restaurante con estrellas Michelin. Presenta esta receta al cliente de manera muy elegante y apetitosa:\n\n"
-                f"**Plato:** {nombre}\n"
-                f"**Ingredientes principales:** {ings}\n"
-                f"**Preparación:**\n{pasos}\n\n"
-                f"Contexto del cliente: Tiene {sesion['datos']['tiempo']} para cocinar y su dieta es '{sesion['datos']['dieta']}'.\n"
-                f"Dale un toque profesional, motivador y responde completamente en español."
-            )
-            
+            prompt_chef = (
+                "Eres un Chef de un restaurante con estrellas Michelin. "
+                "El cliente te ha pedido una receta con estas preferencias exactas:\n"
+                f"- Tipo: {datos['tipo']}\n"
+                f"- Ingrediente principal: {datos['ingrediente']}\n"
+                f"- Tiempo disponible: {datos['tiempo']}\n"
+                f"- Dieta: {datos['dieta']}\n\n"
+                f"Aquí tienes las recetas disponibles en tu base de datos (RAG):\n{context}\n\n"
+                "Instrucciones:\n"
+                "1. Evalúa si las preferencias del cliente tienen sentido. Si son letras sin sentido (ej. 'aa') o incoherentes, responde textualmente: 'No tengo información suficiente para esta solicitud'.\n"
+                "2. Si la petición tiene sentido, selecciona la mejor receta del contexto PERO NO EXPLIQUES tu proceso de selección. Ve directamente a la presentación elegante del plato.\n"
+                "3. Escribe la receta COMPLETA (todos los ingredientes y todos los pasos). No la cortes ni la abrevies.\n"
+                "4. Responde siempre en Español usando formato markdown.\n"
+                "5. USA SOLO LA INFORMACIÓN DEL CONTEXTO. Si ninguna encaja lógicamente, responde: 'No tengo información suficiente para esta solicitud'."
+                )
             if self.llm_service is None:
-                respuesta_llm = f"[Modo Fallback - Sin LLM]\nReceta: {nombre}\nIngredientes: {ings}\nPasos:\n{pasos}"
+                respuesta_llm = f"[Modo Fallback - Sin LLM]\nBasado en tu búsqueda, encontré esto:\n{context}"
             else:
-                respuesta_llm = self.llm_service.ask(prompt)
-                
-            # Resetear estado para nueva charla
-            self.sesiones[session_id]["estado"] = "inicio" 
+                respuesta_llm = self.llm_service.ask(prompt_chef)
+
+            valida = es_respuesta_valida(respuesta_llm, context)
+            
+            self.sesiones[session_id] = {"estado": "esperando_tipo", "datos": {}}
+
+            if not valida:
+                return {
+                    "estado": "escalado",
+                    "reply": escalar_a_humano(busqueda),
+                    "escalated": True,
+                    "top_k": top_k,
+                    "retrieved_chunks": recetas,
+                    "distances": distances,
+                }
+
             return {
-                "estado": "finalizado", 
+                "estado": "resuelto",
                 "reply": respuesta_llm,
-                "receta_encontrada": nombre,
-                "distancia_faiss": dist
+                "escalated": False,
+                "top_k": top_k,
+                "retrieved_chunks": recetas,
+                "distances": distances,
             }
 
-        return {"estado": sesion.get("estado", "desconocido"), "reply": "Dime 'hola' para empezar de nuevo."}
+        return {"estado": "desconocido", "reply": "Dime 'hola' para empezar de nuevo."}
 
 
 def create_chef_agent_app() -> Flask:
@@ -362,11 +463,14 @@ def create_chef_agent_app() -> Flask:
         payload = request.get_json(silent=True) or {}
         message = str(payload.get("message", "")).strip()
         session_id = str(payload.get("session_id", "default")).strip()
+        top_k = int(payload.get("top_k", DEFAULT_TOP_K))
+        if top_k <= 0:
+            top_k = DEFAULT_TOP_K
 
         if not message:
             return jsonify({"ok": False, "reply": "Por favor, escribe un mensaje."}), 400
 
-        resultado = chef_agent.run(session_id, message)
+        resultado = chef_agent.run(session_id, message, top_k=top_k)
         return jsonify({
             "ok": True,
             "session_id": session_id,
